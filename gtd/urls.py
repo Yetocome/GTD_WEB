@@ -17,10 +17,11 @@ from django.conf.urls import patterns, url
 from gtd.views import *
 
 urlpatterns = [
-    url(r'^/$', home_page),
     url(r'^overview/', view_all),
     url(r'^login/', login),
     url(r'^pomodoro/', pomodoro_working),
     url(r'^schedule/', view_schedule),
     url(r'^health/', view_health),
+    url(r'^health/import/', import_health),
+    url(r'^health/export/', export_health),
 ]

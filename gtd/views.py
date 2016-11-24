@@ -10,7 +10,7 @@ def view_all(request):
 
 def login(request):
     pass
-    
+
 def pomodoro_working(request):
     pass
 
@@ -18,4 +18,10 @@ def view_schedule(request):
     pass
 
 def view_health(request):
+    pass
+
+def import_health(request):
+    pass
+
+def export_health(request):
     pass
