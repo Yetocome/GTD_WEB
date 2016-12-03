@@ -11,7 +11,13 @@ def view_all(request):
 def login(request):
     pass
 
-def pomodoro_working(request):
+def new_pomodoro(request):
+    pass
+
+def view_pomodoro(request):
+    pass
+
+def new_schedule(request):
     pass
 
 def view_schedule(request):
