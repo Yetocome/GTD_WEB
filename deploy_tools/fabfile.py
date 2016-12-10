@@ -20,7 +20,8 @@ def _get_latest_source(source_folder):
 
 def _update_settings(source_folder, domain_name):
     settings_path = source_folder + '/GTD_Web/settings.py'
-    sed(settings_path, "DEBUG = Ture", "DEBUG = False")
+    # sed(settings_path, 'DEBUG = Ture', 'DEBUG = False')
+    sed(settings_path, "DEBUG = True", "DEBUG = False")
     sed(settings_path,
         'ALLOWED_HOSTS =.+$',
         'ALLOWED_HOSTS = ["%s"]' % (domain_name,)
