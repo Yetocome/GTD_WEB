@@ -28,8 +28,8 @@ class TodoItem(models.Model):
 
 class Pomodoro(models.Model):
     todo = models.ForeignKey(TodoItem)
-    start_time = models.DateTimeField(auto_now=True)
-    end_time = models.DateTimeField()
+    date = models.DateField(default=None)
+    start_time = models.TimeField(default=None)
     completed_flag = models.BooleanField()
     def __str__(self):
         return self.todo.todo+' potato'

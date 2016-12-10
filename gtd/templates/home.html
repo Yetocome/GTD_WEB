@@ -164,23 +164,36 @@
        			<h3>
        				漏计番茄提交
        			</h3>
-       			<form role="form">
+       			<form role="form" action="/pomodoro/post" method="POST">
+                    {% csrf_token %}
        				<div class="form-group">
-       					 <label for="exampleInputEmail1">番茄</label>
-                         <select class="form-control">
+       					 <label for="InputTodo">番茄</label>
+                         <select class="form-control" name="which_todo">
+                             <option value="">请选择</option>
                              {% for todo in my_todos %}
-                             <option value={{forloop.counter}}>{{ todo.todo }}</option>
+                                <option value="{{ todo.id }}">{{ todo.todo }}</option>
                              {% endfor %}
                          </select>
        				</div>
-       				<div class="form-group">
-       					 <label for="exampleInputPassword1">Time</label>
+                    <div class="form-group">
+                         <label for="InputTime">Date</label>
+                         <input type="date" class="form-control" name="date_time"/>
 
-                         <input type="password" class="form-control" id="exampleInputPassword1" />
+                    </div>
+       				<div class="form-group">
+       					 <label for="InputTime">Time</label>
+                         <input type="time" class="form-control" name="start_time"/>
+
        				</div>
+                    <!-- <div class="form-group">
+                         <label for="InputNumber">Number</label>
+                        <input type="number" class="form-control" name="pomodoro_numbers"/>
+                    </div> -->
+
        				<div class="checkbox">
-       					 <label><input type="checkbox" />Not Completed</label>
-       				</div> <button type="submit" class="btn btn-default">Submit</button>
+       					 <label><input type="checkbox" name="flag"/>Not Completed</label>
+       				</div>
+                    <button type="submit" class="btn btn-default">Submit</button>
        			</form>
        		</div>
        	</div>
