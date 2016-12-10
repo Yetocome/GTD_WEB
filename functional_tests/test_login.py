@@ -7,7 +7,8 @@ class NewVisitorTest(FunctionalTest):
         self.browser.get(self.server_url)
         # 注意到网页的标题和头部都有"MyGTD"的字样
         self.assertIn('MyGTD', self.browser.title)
-        
+
+        # 应用邀请
 
 class UserVisitorTest(FunctionalTest):
     def test_can_login(self):

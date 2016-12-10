@@ -9,6 +9,9 @@ class User(models.Model):
     long_break_time = models.IntegerField(default=15)
     how_many_a_break = models.IntegerField(default=4)
 
+    def __str__(self):
+        return self.name
+
 class TodoItem(models.Model):
     user = models.ForeignKey(User, default=None)
     todo = models.CharField(max_length=100)
@@ -20,13 +23,16 @@ class TodoItem(models.Model):
     current_pomodores = models.IntegerField(default=0)
     class Meta:
         unique_together = ('user', 'todo')
+    def __str__(self):
+        return self.todo
 
 class Pomodoro(models.Model):
     todo = models.ForeignKey(TodoItem)
     start_time = models.DateTimeField(auto_now=True)
     end_time = models.DateTimeField()
     completed_flag = models.BooleanField()
-
+    def __str__(self):
+        return self.todo.todo+' potato'
 class ScheduleItem(models.Model):
     user = models.ForeignKey(User, default=None)
     routine = models.CharField(max_length=100)
@@ -35,9 +41,13 @@ class ScheduleItem(models.Model):
     loop_time = models.IntegerField(default=0)
     class Meta:
         unique_together = ('user', 'routine')
+    def __str__(self):
+        return self.routine
 
 class Tag(models.Model):
     tag = models.CharField(max_length=20, primary_key=True)
+    def __str__(self):
+        return self.tag
 
 class TagAndTodo(models.Model):
     tag = models.ForeignKey(Tag, default=None)
@@ -59,3 +69,5 @@ class HealthLog(models.Model):
     when_to_sleep = models.DateTimeField()
     when_to_wake = models.DateTimeField()
     sleep_quality = models.IntegerField()
+    def __str__(self):
+        return self.date
