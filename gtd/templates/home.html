@@ -1,12 +1,189 @@
 <!DOCTYPE html>
 <html>
-<head>
+   <head>
+      <title>MyGTD</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- 引入 Bootstrap -->
+      <link href="../static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+      <!-- <script src="../static/bootstrap/js/bootstrap.min.js"></script> -->
+      <script src="../static/jquery-3.1.1.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   </head>
+   <body>
+       <div class="container">
+        <h1>
+            MyGTD
+        </h1>
+       	<div class="row clearfix">
+       		<div class="col-md-12 column">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#sectionA">今日规划</a></li>
+                    <li><a data-toggle="tab" href="#sectionB">本周规划</a></li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">数据统计<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="tab" href="#dropdown1">最近番茄数据分析</a></li>
+                            <li><a data-toggle="tab" href="#dropdown2">最近效率分析</a></li>
+                        </ul>
+                    </li>
+                    <li class="disabled"><a data-toggle="tab" href="#">更多功能（开发中）</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="sectionA" class="tab-pane fade in active">
+                        <h3>Section A</h3>
+                        <p>项目A - 番茄数目</p>
+                    </div>
+                    <div id="sectionB" class="tab-pane fade">
+                        <table class="table">
+               				<thead>
+               					<tr>
+                                    <th>
+                                        时间段
+                                    </th>
+               						<th>
+               							周一
+               						</th>
+               						<th>
+               							周二
+               						</th>
+               						<th>
+               							周三
+               						</th>
+               						<th>
+               							周四
+               						</th>
+               					</tr>
+               				</thead>
+               				<tbody>
+               					<tr>
+               						<td>
+               							2016/12/25
+               						</td>
+               						<td>
+               							commit
+               						</td>
+               						<td>
+               							01/04/2012
+               						</td>
+               						<td>
+               							Default
+               						</td>
+               					</tr>
+               				</tbody>
+               			</table>
+                        <p>
+                             <a class="btn btn-primary btn-large" href="#">Learn more</a>
+                        </p>
+                    </div>
+                    <div id="dropdown1" class="tab-pane fade">
+                        <h3>Dropdown 1</h3>
+                        <p>WInteger convallis, nulla in sollicitudin placerat, ligula enim auctor lectus, in mollis diam dolor at lorem. Sed bibendum nibh sit amet dictum feugiat. Vivamus arcu sem, cursus a feugiat ut, iaculis at erat. Donec vehicula at ligula vitae venenatis. Sed nunc nulla, vehicula non porttitor in, pharetra et dolor. Fusce nec velit velit. Pellentesque consectetur eros.</p>
+                    </div>
+                    <div id="dropdown2" class="tab-pane fade">
+                        <h3>Dropdown 2</h3>
+                        <p>Donec vel placerat quam, ut euismod risus. Sed a mi suscipit, elementum sem a, hendrerit velit. Donec at erat magna. Sed dignissim orci nec eleifend egestas. Donec eget mi consequat massa vestibulum laoreet. Mauris et ultrices nulla, malesuada volutpat ante. Fusce ut orci lorem. Donec molestie libero in tempus imperdiet. Cum sociis natoque penatibus et magnis.</p>
+                    </div>
+                    <div id="sectionC" class="tab-pane fade">
 
-</head>
-<body>
-    <h1>Add Schedule</h1>
-    <h1>Your Todo List</h1>
-    <h1>Pomodoro</h1>
+                    </div>
+                </div>
 
-</body>
+       		</div>
+       	</div>
+       	<div class="row clearfix">
+       		<div class="col-md-4 column">
+       			<h3>
+       				我的日程
+       			</h3>
+                <!-- <form method="POST">
+                    <input name="item_text" id="id_new_item"
+                        class="form-control"
+                        placeholder="添加日程"
+                    />
+                </form> -->
+       			<table class="table">
+       				<thead>
+       					<tr>
+       						<th>时间</th>
+       						<th>事件</th>
+       						<th>时长</th>
+       						<th>重复</th>
+       					</tr>
+       				</thead>
+       				<tbody>
+                        {% for schedule in my_schedules %}
+                            <tr>
+                                <td>{{ schedule.time }}</td>
+                                <td>{{ schedule.routine }}</td>
+                                <td>{{ schedule.estimated_duration }}</td>
+                                <td>{{ schedule.loop_time }}</td>
+                            </tr>
+                        {% endfor %}
+       				</tbody>
+       			</table>
+       		</div>
+       		<div class="col-md-4 column">
+       			<h3>
+       				我的土豆
+       			</h3>
+                <!-- <form method="POST">
+                    <input name="item_text" id="id_new_item"
+                        class="form-control"
+                        placeholder="添加土豆"
+                    />
+                </form> -->
+       			<table class="table">
+       				<thead>
+       					<tr>
+       						<th>Todo(点击开始)</th>
+       						<th>Deadline</th>
+       						<th>估计</th>
+                            <th>实际</th>
+       					</tr>
+       				</thead>
+       				<tbody>
+                        {% for todo in my_todos %}
+                           <tr>
+                               <td><a href='pomodoro/{{ todo.id }}/'>{{ todo.todo }}</a></td>
+                               <td>{{ todo.due_time }}</td>
+                               <td>{{ todo.estimated_pomodoroes }}</td>
+                               <td>{{ todo.current_pomodores }}</td>
+                           </tr>
+                        {% endfor %}
+       				</tbody>
+       			</table>
+                <!-- <a href = '/pomodoro/'>
+                    <p class="text-right" >
+                        点击进入番茄钟界面>>
+                    </p>
+                </a> -->
+
+       		</div>
+       		<div class="col-md-4 column">
+       			<h3>
+       				漏计番茄提交
+       			</h3>
+       			<form role="form">
+       				<div class="form-group">
+       					 <label for="exampleInputEmail1">番茄</label>
+                         <select class="form-control">
+                             {% for todo in my_todos %}
+                             <option value={{forloop.counter}}>{{ todo.todo }}</option>
+                             {% endfor %}
+                         </select>
+       				</div>
+       				<div class="form-group">
+       					 <label for="exampleInputPassword1">Time</label>
+
+                         <input type="password" class="form-control" id="exampleInputPassword1" />
+       				</div>
+       				<div class="checkbox">
+       					 <label><input type="checkbox" />Not Completed</label>
+       				</div> <button type="submit" class="btn btn-default">Submit</button>
+       			</form>
+       		</div>
+       	</div>
+       </div>
+   </body>
 </html>

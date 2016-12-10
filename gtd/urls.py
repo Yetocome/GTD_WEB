@@ -19,8 +19,8 @@ from gtd.views import *
 urlpatterns = [
     url(r'^overview/$', view_all),
     url(r'^login/$', login),
-    url(r'^pomodoro/$', view_pomodoro),
-    url(r'^pomodoro/new$', new_pomodoro),
+    url(r'^pomodoro/(\d+)/$', view_pomodoro),
+    # url(r'^pomodoro/new$', new_pomodoro),
     url(r'^schedule/$', view_schedule),
     url(r'^schedule/new$', new_schedule),
     url(r'^health/$', view_health),
