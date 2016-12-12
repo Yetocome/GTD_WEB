@@ -115,6 +115,24 @@ function playDing() {
     }
 }
 
+function post(URL, PARAMS) {
+    var temp = document.createElement("form");
+    temp.action = URL;
+    temp.method = "post";
+    temp.style.display = "none";
+    for (var x in PARAMS) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = PARAMS[x];
+        // alert(opt.name)
+        temp.appendChild(opt);
+    }
+    document.body.appendChild(temp);
+    temp.submit();
+    return temp;
+}
+
+
 function toggleVisible(showHide) {
     // Toggle between the options being visible or not.
     var top = $(".mdl-card__title");
@@ -131,7 +149,7 @@ function toggleVisible(showHide) {
         top.animate({
             height: top.height() + bottom.height() + 64
         }, 300, function() {
-            $("#message").text("Do the thing!");
+            $("#message").text(data_from_django);
             $("#message").fadeIn(300);
         });
         bottom.slideUp(300);
@@ -160,8 +178,18 @@ window.setInterval(function() {
         if (pomodoro.timeRemaining < 0 &&
             pomodoro.isBreak === false) {
             pomodoro.isBreak = true;
+            var today = new Date().getDate();
             $("#message").fadeOut(300, function() {
                 $("#message").text("Take a break!");
+                // console.log(this_todo_id)
+                // console.log(pomodoro.startTime)
+                // console.log(today)
+                // post('/pomodoro/post', {
+                //     which_todo: this_todo_id,
+                //     start_time: pomodoro.startTime,
+                //     date_time: today,
+                //     flag: 1
+                // });
                 $("#message").fadeIn(300, function() {
                     playDing();
                 });
@@ -171,7 +199,7 @@ window.setInterval(function() {
             pomodoro.isBreak === true) {
             pomodoro.isBreak = false;
             $("#message").fadeOut(300, function() {
-                $("#message").text("Do the thing!");
+                $("#message").text(data_from_django);
                 $("#message").fadeIn(300, function() {
                     playDing();
                 });

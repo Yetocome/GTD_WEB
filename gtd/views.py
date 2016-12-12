@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from gtd.models import ScheduleItem, TodoItem, Pomodoro
+import time, datetime
 # Create your views here.
+
+def generate_week_plan():
+    pass
 
 def home_page(request):
     schedules = ScheduleItem.objects.order_by('time')
@@ -26,26 +30,40 @@ def view_pomodoro(request, todo_id):
 
 def post_pomodoro(request):
     if request.method == 'POST':
-        try:
+        # try:
+        if True:
             which_todo =  TodoItem.objects.get(id=request.POST['which_todo'])
-            start_time_ = request.POST['start_time']
-            date_ = request.POST['date_time']
-            flag = request.POST['flag']
+            hour, minute = request.POST['start_time'].split(':')
+            year, month, date = request.POST['date_time'].split('-')
+            if request.POST.get('flag') == None:
+                flag = True
+            else:
+                flag = False
+
             # numbers = request.POST['pomodoro_numbers']
-            Pomodoro.objects.create(todo=which_todo,
-                date=date_,
-                start_time=start_time_,
+            Pomodoro.objects.create(
+                todo=which_todo,
+                start_time=datetime.datetime(int(year), int(month), int(date), int(hour), int(minute)),
                 completed_flag=flag
             )
-            # for i in numbers:
-            #     Pomodoro.objects.create(todo=which_todo,
-            #         start_time=date_time,
-            #         )
             return HttpResponse("Succeeds.")
-        except Exception:
-            return HttpResponseNotFound('Wrong!!!')
+        # except Exception:
+        #     return HttpResponseNotFound('Wrong!!!')
     else:
         return HttpResponseNotFound('Are you kidding?')
+
+def record_pomodoro(request, todo_id, duration):
+    try:
+        which_todo =  TodoItem.objects.get(id=request.POST['which_todo'])
+        Pomodoro.objects.create(
+            todo=which_todo,
+            start_time=time.now(),
+            duration=duration,
+            completed_flag=True
+        )
+        return HttpResponse('Insertion succeeds.')
+    except ObjectDoesNotExist:
+        return HttpResponseNotFound('No such todo to record')
 def new_schedule(request):
     pass
 

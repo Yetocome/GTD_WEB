@@ -4,10 +4,10 @@ from django.db import models
 
 class User(models.Model):
     name = models.CharField(max_length=20)
-    work_time = models.IntegerField(default=25)
-    short_break_time = models.IntegerField(default=5)
-    long_break_time = models.IntegerField(default=15)
-    how_many_a_break = models.IntegerField(default=4)
+    # work_time = models.IntegerField(default=25)
+    # short_break_time = models.IntegerField(default=5)
+    # long_break_time = models.IntegerField(default=15)
+    # how_many_a_break = models.IntegerField(default=4)
 
     def __str__(self):
         return self.name
@@ -28,9 +28,10 @@ class TodoItem(models.Model):
 
 class Pomodoro(models.Model):
     todo = models.ForeignKey(TodoItem)
-    date = models.DateField(default=None)
-    start_time = models.TimeField(default=None)
-    completed_flag = models.BooleanField()
+    # date = models.DateField(default=None)
+    start_time = models.DateTimeField(default=None)
+    duration = models.IntegerField(default=25)
+    completed_flag = models.BooleanField(default=True)
     def __str__(self):
         return self.todo.todo+' potato'
 class ScheduleItem(models.Model):
