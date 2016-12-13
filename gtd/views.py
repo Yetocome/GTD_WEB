@@ -54,21 +54,22 @@ def post_pomodoro(request):
         return HttpResponseNotFound('Are you kidding?')
 
 def new_pomodoro(request, todo_id):
-    if request.GET['duration'] == None:
-        duration = 25
-    else:
-        duration = request.GET['duration']
+    try:
+        duration_ = request.GET['duration']
+    except KeyError:
+        duration_ = 25
     try:
         which_todo =  TodoItem.objects.get(id=todo_id)
         Pomodoro.objects.create(
             todo=which_todo,
             start_time=datetime.datetime.now(),
-            duration=duration,
+            duration=duration_,
             completed_flag=True
         )
         return HttpResponse('Insertion succeeds.')
     except ObjectDoesNotExist:
         return HttpResponseNotFound('No such todo to record')
+
 def new_schedule(request):
     pass
 
