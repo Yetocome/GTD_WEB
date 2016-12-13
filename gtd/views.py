@@ -2,14 +2,25 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from gtd.models import ScheduleItem, TodoItem, Pomodoro
 import time, datetime
+from django.utils import timezone
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 # Create your views here.
 
-def generate_week_plan():
-    pass
+# week_plan = {
+#     'today': []
+# }
+#
+#
+# def generate_week_plan():
+#     today = timezone.now().today()
+#     next_day = today+datetime.timedelta(weeks=1)
+#     this_week_shedules = ScheduleItem.objects.filter(time__gt = today, time__lt = next_day)
+#
+# def get_plan():
+#     pass　
 
 def home_page(request):
-    schedules = ScheduleItem.objects.order_by('time')
+    schedules = ScheduleItem.objects.order_by('start_time')
     todos = TodoItem.objects.order_by('priority')
     return render(request, 'home.html', {
         'my_schedules': schedules,

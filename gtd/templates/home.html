@@ -133,17 +133,19 @@
        					<tr>
        						<th>时间</th>
        						<th>事件</th>
-       						<th>时长</th>
-       						<th>重复</th>
+       						<th>预计时长</th>
+                            <th>重复</th>
+       						<th>次数</th>
        					</tr>
        				</thead>
        				<tbody>
                         {% for schedule in my_schedules %}
                             <tr>
-                                <td>{{ schedule.time }}</td>
+                                <td>{{ schedule.start_time }}</td>
                                 <td>{{ schedule.routine }}</td>
                                 <td>{{ schedule.estimated_duration }}</td>
-                                <td>{{ schedule.loop_time }}</td>
+                                <td>{{ schedule.loop_types }}</td>
+                                <td>{{ schedule.loop_times }}</td>
                             </tr>
                         {% endfor %}
        				</tbody>

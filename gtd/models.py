@@ -1,4 +1,23 @@
 from django.db import models
+import datetime, calendar
+
+def add_months(sourcetime, months):
+    month = sourcetime.month - 1 + months
+    year = int(sourcetime.year + month / 12 )
+    month = month % 12 + 1
+    day = min(sourcetime.day,calendar.monthrange(year,month)[1])
+    return datetime.datetime(year, month, day,
+        sourcetime.hour, sourcetime.minute, sourcetime.second)
+
+def add_years(sourcetime, years):
+    return datetime.datetime(
+        sourcetime.year+years,
+        sourcetime.month,
+        sourcetime.day,
+        sourcetime.hour,
+        sourcetime.minute,
+        sourcetime.second
+    )
 
 # Create your models here.
 
@@ -35,15 +54,40 @@ class Pomodoro(models.Model):
     def __str__(self):
         return self.todo.todo+' potato'
 class ScheduleItem(models.Model):
+    LOOP_TYPES = (
+        ('Nope', '不循环'),
+        ('Daily', '每天'),
+        ('Weekly', '每周'),
+        ('Monthly', '每月'),
+        ('Yearly', '每年')
+    )
     user = models.ForeignKey(User, default=None)
     routine = models.CharField(max_length=100)
-    time = models.DateTimeField()
+    start_time = models.DateTimeField()
     estimated_duration = models.DurationField()
-    loop_time = models.IntegerField(default=0)
+    loop_types = models.CharField(max_length=1, default='Nope', choices=LOOP_TYPES)
+    # 0:never 1:daily 7:weekly -1:monthly -2:yearly any-pos:auto_def
+    loop_times = models.IntegerField(default=0)
+    # 0:Never Neg: forever
     class Meta:
         unique_together = ('user', 'routine')
     def __str__(self):
         return self.routine
+    @property
+    def end_time(self):
+        if self.loop_times == 0:
+            return start_time
+        elif self.loop_times < 0:
+            return datetime.datetime.max
+        else:
+            if self.loop_types == self.LOOP_TYPES[1]:
+                return self.start_time+datetime.timedelta(days=1)*self.loop_times
+            elif self.loop_types == self.LOOP_TYPES[2]:
+                return self.start_time+datetime.timedelta(weeks=1)*self.loop_times
+            elif self.loop_types == self.LOOP_TYPES[3]:
+                return add_months(self.start_time, loop_times)
+            elif self.loop_types == self.LOOP_TYPES[4]:
+                return add_years(self.start_time, loop_times)
 
 class Tag(models.Model):
     tag = models.CharField(max_length=20, primary_key=True)
