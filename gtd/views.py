@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
 from gtd.models import ScheduleItem, TodoItem, Pomodoro
 import time, datetime
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 # Create your views here.
 
 def generate_week_plan():
@@ -52,12 +53,16 @@ def post_pomodoro(request):
     else:
         return HttpResponseNotFound('Are you kidding?')
 
-def record_pomodoro(request, todo_id, duration):
+def new_pomodoro(request, todo_id):
+    if request.GET['duration'] == None:
+        duration = 25
+    else:
+        duration = request.GET['duration']
     try:
-        which_todo =  TodoItem.objects.get(id=request.POST['which_todo'])
+        which_todo =  TodoItem.objects.get(id=todo_id)
         Pomodoro.objects.create(
             todo=which_todo,
-            start_time=time.now(),
+            start_time=datetime.datetime.now(),
             duration=duration,
             completed_flag=True
         )

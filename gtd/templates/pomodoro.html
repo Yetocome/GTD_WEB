@@ -144,7 +144,7 @@
     </script> -->
     <script type="text/javascript">
         data_from_django = "{{todo_item.todo|safe}}";
-        this_todo_id = {{todo_item.id|safe}};
+        this_todo_id = "{{todo_item.id|safe}}";
     </script>
     <script src="/static/pomodoro/script.js">
     </script>

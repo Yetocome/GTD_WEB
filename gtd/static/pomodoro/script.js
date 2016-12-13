@@ -1,5 +1,5 @@
 // pomodoro object contains all the values used by the pomodoro clock, as well as methods to manipulate those values and show them in the html widget.
-var ding = new Audio("audio/ding.mp3"),
+var ding = new Audio("/static/pomodoro/ding.mp3"),
     pomodoro = {
         isBreak: false,
         isPaused: false,
@@ -12,13 +12,13 @@ var ding = new Audio("audio/ding.mp3"),
         sessionLength: {
             value: 25,
             increase: function() {
-                this.value++;
+                this.value += 5;
                 $("#session-length").text(this.value);
                 $("#counter").text(this.value.toString() + ":00");
             },
             decrease: function() {
                 if (this.value > 1) {
-                    this.value--;
+                    this.value -= 5;
                     $("#session-length").text(this.value);
                     $("#counter").text(this.value.toString() + ":00");
                 }
@@ -115,24 +115,6 @@ function playDing() {
     }
 }
 
-function post(URL, PARAMS) {
-    var temp = document.createElement("form");
-    temp.action = URL;
-    temp.method = "post";
-    temp.style.display = "none";
-    for (var x in PARAMS) {
-        var opt = document.createElement("textarea");
-        opt.name = x;
-        opt.value = PARAMS[x];
-        // alert(opt.name)
-        temp.appendChild(opt);
-    }
-    document.body.appendChild(temp);
-    temp.submit();
-    return temp;
-}
-
-
 function toggleVisible(showHide) {
     // Toggle between the options being visible or not.
     var top = $(".mdl-card__title");
@@ -181,15 +163,7 @@ window.setInterval(function() {
             var today = new Date().getDate();
             $("#message").fadeOut(300, function() {
                 $("#message").text("Take a break!");
-                // console.log(this_todo_id)
-                // console.log(pomodoro.startTime)
-                // console.log(today)
-                // post('/pomodoro/post', {
-                //     which_todo: this_todo_id,
-                //     start_time: pomodoro.startTime,
-                //     date_time: today,
-                //     flag: 1
-                // });
+                $.get('new', {duration: pomodoro.sessionLength.value});
                 $("#message").fadeIn(300, function() {
                     playDing();
                 });
