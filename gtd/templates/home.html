@@ -38,45 +38,41 @@
                 </ul>
                 <div class="tab-content">
                     <div id="sectionA" class="tab-pane fade in active">
-                        <h3>Section A</h3>
-                        <p>项目A - 番茄数目</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>时间段</th>
+                                    <th>日程</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for block in my_day %}
+                                    <tr>
+                                        <td>{{ block.name }}</td>
+                                        <td>{{ block.schedule }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                     <div id="sectionB" class="tab-pane fade">
                         <table class="table">
                				<thead>
                					<tr>
-                                    <th>
-                                        时间段
-                                    </th>
-               						<th>
-               							周一
-               						</th>
-               						<th>
-               							周二
-               						</th>
-               						<th>
-               							周三
-               						</th>
-               						<th>
-               							周四
-               						</th>
+                                    <!-- <th>周几</th> -->
+                                    <th>早上</th>
+               						<th>下午</th>
+               						<th>晚上</th>
                					</tr>
                				</thead>
                				<tbody>
-               					<tr>
-               						<td>
-               							2016/12/25
-               						</td>
-               						<td>
-               							commit
-               						</td>
-               						<td>
-               							01/04/2012
-               						</td>
-               						<td>
-               							Default
-               						</td>
-               					</tr>
+                                {% for day_plan in my_week %}
+                                    <tr>
+                                        {% for block in day_plan %}
+                                            <td>{{ block.schedule }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
                				</tbody>
                			</table>
                         <p>

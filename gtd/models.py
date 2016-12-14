@@ -44,10 +44,10 @@ class TodoItem(models.Model):
         unique_together = ('user', 'todo')
     def __str__(self):
         return self.todo
-
+    # Derived attribute, get current pomodoro numbers
+    @property
     def current_pomodores(self):
         return Pomodoro.objects.filter(todo=self).count()
-
 
 class Pomodoro(models.Model):
     todo = models.ForeignKey(TodoItem)
@@ -75,7 +75,7 @@ class ScheduleItem(models.Model):
     # 0:Never Neg: forever
     class Meta:
         unique_together = ('user', 'routine')
-
+    # Valitation for set of duration
     def save(self, *args, **kwargs):
         if self.estimated_duration > datetime.timedelta(hours=18):
             raise ValueError("You cannot add a estimated duration more than 18 hours")
@@ -83,7 +83,7 @@ class ScheduleItem(models.Model):
 
     def __str__(self):
         return self.routine
-
+    # Derived attribute, know when will this scheule end
     @property
     def end_time(self):
         if self.loop_times == 0:
