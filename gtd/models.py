@@ -39,11 +39,15 @@ class TodoItem(models.Model):
     priority = models.IntegerField()
     due_time = models.DateTimeField()
     estimated_pomodoroes = models.IntegerField()
-    current_pomodores = models.IntegerField(default=0)
+    # current_pomodores = models.IntegerField(default=0)
     class Meta:
         unique_together = ('user', 'todo')
     def __str__(self):
         return self.todo
+
+    def current_pomodores(self):
+        return Pomodoro.objects.filter(todo=self).count()
+
 
 class Pomodoro(models.Model):
     todo = models.ForeignKey(TodoItem)
@@ -55,24 +59,31 @@ class Pomodoro(models.Model):
         return self.todo.todo+' potato'
 class ScheduleItem(models.Model):
     LOOP_TYPES = (
-        ('Nope', '不循环'),
-        ('Daily', '每天'),
-        ('Weekly', '每周'),
-        ('Monthly', '每月'),
-        ('Yearly', '每年')
+        ('N', '不循环'),
+        ('D', '每天'),
+        ('W', '每周'),
+        ('M', '每月'),
+        ('Y', '每年')
     )
     user = models.ForeignKey(User, default=None)
     routine = models.CharField(max_length=100)
     start_time = models.DateTimeField()
     estimated_duration = models.DurationField()
-    loop_types = models.CharField(max_length=1, default='Nope', choices=LOOP_TYPES)
+    loop_types = models.CharField(max_length=1, default='N', choices=LOOP_TYPES)
     # 0:never 1:daily 7:weekly -1:monthly -2:yearly any-pos:auto_def
     loop_times = models.IntegerField(default=0)
     # 0:Never Neg: forever
     class Meta:
         unique_together = ('user', 'routine')
+
+    def save(self, *args, **kwargs):
+        if self.estimated_duration > datetime.timedelta(hours=18):
+            raise ValueError("You cannot add a estimated duration more than 18 hours")
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.routine
+
     @property
     def end_time(self):
         if self.loop_times == 0:
