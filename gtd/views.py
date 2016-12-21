@@ -34,9 +34,10 @@ class MyBlock(object):
 
 class Planner(object):
     def get_block_place(self, sourcetime):
+        sourcetime_hour = sourcetime.hour
         if 0 <= sourcetime.hour < 6:
-            sourcetime.hour += 6
-        return (sourcetime.weekday(), int(sourcetime.hour/6)-1)
+            sourcetime_hour += 6
+        return (sourcetime.weekday(), int(sourcetime_hour/6)-1)
 
     def init_my_week(self):
         self.my_week = []
@@ -70,13 +71,14 @@ class Planner(object):
         return self.my_week[week_day]
 
 def home_page(request):
-    schedules = ScheduleItem.objects.order_by('start_time')
-    todos = TodoItem.objects.order_by('priority')
+    today = timezone.now().date()
+    schedules = ScheduleItem.objects.filter(start_time__gt = today).order_by('start_time')
+    todos = TodoItem.objects.filter(done_flag = False).order_by('priority')
     planner = Planner()
     today_plan = planner.get_today_plan()
     return render(request, 'home.html', {
-        'my_schedules': schedules,
-        'my_todos': todos,
+        'my_schedules': schedules[:5],
+        'my_todos': todos[:5],
         'my_week': planner.my_week,
         'my_day': today_plan
     })

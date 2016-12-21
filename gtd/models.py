@@ -39,6 +39,7 @@ class TodoItem(models.Model):
     priority = models.IntegerField()
     due_time = models.DateTimeField()
     estimated_pomodoroes = models.IntegerField()
+    description = models.CharField(max_length=250, default="")
     # current_pomodores = models.IntegerField(default=0)
     class Meta:
         unique_together = ('user', 'todo')
@@ -72,6 +73,7 @@ class ScheduleItem(models.Model):
     loop_types = models.CharField(max_length=1, default='N', choices=LOOP_TYPES)
     # 0:never 1:daily 7:weekly -1:monthly -2:yearly any-pos:auto_def
     loop_times = models.IntegerField(default=0)
+    description = models.CharField(max_length=250, default="")
     # 0:Never Neg: forever
     class Meta:
         unique_together = ('user', 'routine')
