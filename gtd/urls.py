@@ -18,7 +18,10 @@ from gtd.views import *
 
 urlpatterns = [
     url(r'^overview/$', view_all),
-    url(r'^login/$', login),
+    # url(r'^login/$', login),
+    url(r'^register/', register, name='register'),
+    url(r'^login/', my_login, name='login'),
+    url(r'^logout', my_logout, name='logout'),
     url(r'^pomodoro/(\d+)/$', view_pomodoro),
     url(r'^pomodoro/(\d+)/new$', new_pomodoro),
     url(r'^pomodoro/post$', post_pomodoro),

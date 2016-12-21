@@ -1,11 +1,63 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound
 from gtd.models import ScheduleItem, TodoItem, Pomodoro, User
+from gtd.forms import LoginForm, RegistrationForm
 import time, datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login, logout
 # Create your views here.
 
+def register(request):
+    if request.user.is_authenticated():
+        logout(request)
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.email = form.cleaned_data['email']
+            user.save()
+            messages.info(request, '注册成功!')
+            return redirect('admin/')
+        return render(request, 'register.html', {
+            'form':form,
+        })
+    else:
+        form = RegistrationForm()
+        return render(request, 'register.html', {
+            'form':form,
+        })
+
+
+def my_login(request):
+    if request.user.is_authenticated():
+        logout(request)
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        if(form.is_valid()):
+            if not form.cleaned_data.get('remember_me'):
+                request.session.set_expiry(0)
+            auth_login(request, form.get_user())
+            try:
+                return redirect(request.GET['next'])
+            except:
+                return redirect('/')
+        else:
+            msg = "用户名和密码不匹配!"
+            return render(request, 'login.html', {
+                'form':form,
+                'msg':msg,
+            })
+    else:
+        form = LoginForm()
+        return render(request, 'login.html', {'form':form,})
+
+@login_required
+def my_logout(request):
+    logout(request)
+    return redirect('login/')
 # 数据规范：
 # 早上：8:15-9:55 10:15-11:55 or 8:15-10:10 10:25-11:50 25*4+5*3+15+25*3+5*2  7
 # 下午：13:50-16:25 16:45-18:25 or 13:50-15:45 16:00-17:55 25*4+5*3+15+25*4+5*3 8
@@ -73,6 +125,7 @@ class Planner(object):
 
         return self.my_week[week_day]
 
+@login_required
 def home_page(request):
     # old_loop_schedules = ScheduleItem.objects.raw(
     #     'SELECT * \
@@ -80,9 +133,11 @@ def home_page(request):
     #     WHERE T.loop_times <> 0 \
     #     '
     # )
+
     today = timezone.now()
     old_loop_schedules = []
-    target_user = User.objects.get(pk=1)
+    # target_user = User.objects.get(pk=user_id)
+    target_user = request.user
     my_ScheduleItem = ScheduleItem.objects.filter(user=target_user)
     my_TodoItem = TodoItem.objects.filter(user=target_user)
 
@@ -114,10 +169,12 @@ def login(request):
 # def new_pomodoro(request):
 #     pass
 
+@login_required
 def view_pomodoro(request, todo_id):
     todo_item = TodoItem.objects.get(id=todo_id)
     return render(request, 'pomodoro.html', {'todo_item': todo_item})
 
+@login_required
 def post_pomodoro(request):
     if request.method == 'POST':
         # try:
@@ -142,6 +199,7 @@ def post_pomodoro(request):
     else:
         return HttpResponseNotFound('Are you kidding?')
 
+@login_required
 def new_pomodoro(request, todo_id):
     try:
         duration_ = request.GET['duration']

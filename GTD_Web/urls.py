@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', gtd_view.home_page, name='home'),
     url(r'^', include(gtd_urls)),
+    # url('^', include('django.contrib.auth.urls')),
+
 ]
