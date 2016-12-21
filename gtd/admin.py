@@ -18,6 +18,7 @@ mark_as_done.short_description = "Mark all todo as done"
 
 class TodoItemAdmin(admin.ModelAdmin):
     list_display = ['todo', 'due_time', 'user']
+    list_filter = ['done_flag', 'priority', 'user']
     ordering = ['done_flag']
     actions = [mark_as_done]
 
@@ -25,5 +26,6 @@ admin.site.register(TodoItem, TodoItemAdmin)
 
 class ScheduleItemAdmin(admin.ModelAdmin):
     list_display = ['routine', 'start_time', 'end_time']
+    list_filter = ['loop_types', 'user']
 
 admin.site.register(ScheduleItem, ScheduleItemAdmin)

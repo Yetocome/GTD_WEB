@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound
-from gtd.models import ScheduleItem, TodoItem, Pomodoro
+from gtd.models import ScheduleItem, TodoItem, Pomodoro, User
 import time, datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
@@ -33,6 +33,9 @@ class MyBlock(object):
         self.pomodoro = pomodoro
 
 class Planner(object):
+    def __init__(self, user):
+        self.ScheduleItemQuery = ScheduleItem.objects.filter(user=user)
+
     def get_block_place(self, sourcetime):
         sourcetime_hour = sourcetime.hour
         if 0 <= sourcetime.hour < 6:
@@ -56,7 +59,7 @@ class Planner(object):
     def generate_week_plan(self):
         today = timezone.now().date()
         next_day = today+datetime.timedelta(weeks=1)
-        this_week_shedules = ScheduleItem.objects.filter(start_time__gt = today, start_time__lt = next_day)
+        this_week_shedules = self.ScheduleItemQuery.filter(start_time__gt = today, start_time__lt = next_day)
         for schedule in this_week_shedules:
             which_day, which_block = self.get_block_place(schedule.start_time)
             self.my_week[which_day][which_block].schedule.append(schedule.routine)
@@ -79,21 +82,20 @@ def home_page(request):
     # )
     today = timezone.now()
     old_loop_schedules = []
-    future_schedules = ScheduleItem.objects.filter(start_time__gt = today).order_by('start_time')
-    old_loop_schedules_query_set = ScheduleItem.objects.exclude(loop_times = 0).filter(start_time__lt = today)
+    target_user = User.objects.get(pk=1)
+    my_ScheduleItem = ScheduleItem.objects.filter(user=target_user)
+    my_TodoItem = TodoItem.objects.filter(user=target_user)
+
+    future_schedules = my_ScheduleItem.filter(start_time__gt = today).order_by('start_time')
+    old_loop_schedules_query_set = my_ScheduleItem.exclude(loop_times = 0).filter(start_time__lt = today)
     for old_item in old_loop_schedules_query_set:
         if not old_item.next_time == None:
             print(old_item.next_time)
             if old_item.next_time >= today:
                 old_loop_schedules.append(old_item)
 
-    # i = j = 0
-    # old_loop_schedules = old_loop_schedules[:5]
-    # future_schedules = future_schedules[:5]
-    # while i < old_loop_schedules.__len__() and j < future_schedules.__len__():
-
-    todos = TodoItem.objects.filter(done_flag = False).order_by('priority')
-    planner = Planner()
+    todos = my_TodoItem.filter(done_flag = False).order_by('priority')
+    planner = Planner(target_user)
     today_plan = planner.get_today_plan()
     return render(request, 'home.html', {
         'my_schedules': future_schedules[:5],

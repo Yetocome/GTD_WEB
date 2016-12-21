@@ -31,16 +31,6 @@ def add_years(sourcetime, years):
 
 # Create your models here.
 
-# class User(models.Model):
-#     name = models.CharField(max_length=20)
-#     # work_time = models.IntegerField(default=25)
-#     # short_break_time = models.IntegerField(default=5)
-#     # long_break_time = models.IntegerField(default=15)
-#     # how_many_a_break = models.IntegerField(default=4)
-#
-#     def __str__(self):
-#         return self.name
-
 class TodoItem(models.Model):
     user = models.ForeignKey(User, default=None)
     todo = models.CharField(max_length=100)
