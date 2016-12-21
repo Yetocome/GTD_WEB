@@ -52,11 +52,11 @@ class TodoItem(models.Model):
     # current_pomodores = models.IntegerField(default=0)
     class Meta:
         unique_together = ('user', 'todo')
-    def __str__(self):
-        des = self.description
-        if des == "":
-            des = "no description"
-        return self.todo + ': ' + des
+    # def __str__(self):
+    #     des = self.description
+    #     if des == "":
+    #         des = "no description"
+    #     return self.todo + ': ' + des
     # Derived attribute, get current pomodoro numbers
     @property
     def current_pomodores(self):
