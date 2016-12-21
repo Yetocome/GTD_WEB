@@ -1,5 +1,14 @@
 from django.db import models
 import datetime, calendar
+from django.utils import timezone
+
+LOOP_TYPES = (
+    ('N', '不循环'),
+    ('D', '每天'),
+    ('W', '每周'),
+    ('M', '每月'),
+    ('Y', '每年')
+)
 
 def add_months(sourcetime, months):
     month = sourcetime.month - 1 + months
@@ -44,7 +53,10 @@ class TodoItem(models.Model):
     class Meta:
         unique_together = ('user', 'todo')
     def __str__(self):
-        return self.todo
+        des = self.description
+        if des == "":
+            des = "no description"
+        return self.todo + ': ' + des
     # Derived attribute, get current pomodoro numbers
     @property
     def current_pomodores(self):
@@ -59,13 +71,7 @@ class Pomodoro(models.Model):
     def __str__(self):
         return self.todo.todo+' potato'
 class ScheduleItem(models.Model):
-    LOOP_TYPES = (
-        ('N', '不循环'),
-        ('D', '每天'),
-        ('W', '每周'),
-        ('M', '每月'),
-        ('Y', '每年')
-    )
+
     user = models.ForeignKey(User, default=None)
     routine = models.CharField(max_length=100)
     start_time = models.DateTimeField()
@@ -75,6 +81,62 @@ class ScheduleItem(models.Model):
     loop_times = models.IntegerField(default=0)
     description = models.CharField(max_length=250, default="")
     # 0:Never Neg: forever
+
+
+    @property
+    def end_time(self):
+        if self.loop_times == 0:
+            return self.start_time
+        elif self.loop_times < 0:
+            return datetime.datetime.max
+        else:
+            if self.loop_types == LOOP_TYPES[1][0]:
+                return self.start_time+datetime.timedelta(days=1)*self.loop_times
+            elif self.loop_types == LOOP_TYPES[2][0]:
+                return self.start_time+datetime.timedelta(weeks=1)*self.loop_times
+            elif self.loop_types == LOOP_TYPES[3][0]:
+                return add_months(self.start_time, self.loop_times)
+            elif self.loop_types == LOOP_TYPES[4][0]:
+                return add_years(self.start_time, self.loop_times)
+            else:
+                raise Exception()
+    @property
+    def next_time(self):
+        now = timezone.now()
+
+        if self.end_time < now:
+            return None
+
+        if self.loop_times == 0:
+            return self.start_time
+        else: # Could be optimized by dichotomy
+            next_time = self.start_time
+            if self.loop_types == LOOP_TYPES[1][0]:
+                next_time.replace(now.year, now.month, now.day)
+            elif self.loop_types == LOOP_TYPES[2][0]:
+                for i in range(self.loop_times):
+                    if next_time >= now:
+                        return next_time
+                    next_time += datetime.timedelta(weeks=1)
+                raise Exception()
+            elif self.loop_types == LOOP_TYPES[3][0]:
+                for i in range(self.loop_times):
+                    if next_time >= now:
+                        return next_time
+                    next_time = add_months(next_time, 1)
+                raise Exception()
+            elif self.loop_types == LOOP_TYPES[4][0]:
+                for i in range(self.loop_times):
+                    if next_time >= now:
+                        return next_time
+                    next_time = add_years(next_time, 1)
+                raise Exception()
+            else:
+                raise Exception()
+
+
+
+
     class Meta:
         unique_together = ('user', 'routine')
     # Valitation for set of duration
@@ -84,23 +146,14 @@ class ScheduleItem(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.routine
+        des = self.description
+        if des == "":
+            des = "no description"
+        return self.routine + ': ' + des
+
     # Derived attribute, know when will this scheule end
-    @property
-    def end_time(self):
-        if self.loop_times == 0:
-            return start_time
-        elif self.loop_times < 0:
-            return datetime.datetime.max
-        else:
-            if self.loop_types == self.LOOP_TYPES[1]:
-                return self.start_time+datetime.timedelta(days=1)*self.loop_times
-            elif self.loop_types == self.LOOP_TYPES[2]:
-                return self.start_time+datetime.timedelta(weeks=1)*self.loop_times
-            elif self.loop_types == self.LOOP_TYPES[3]:
-                return add_months(self.start_time, loop_times)
-            elif self.loop_types == self.LOOP_TYPES[4]:
-                return add_years(self.start_time, loop_times)
+
+
 
 class Tag(models.Model):
     tag = models.CharField(max_length=20, primary_key=True)

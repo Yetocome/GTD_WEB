@@ -131,8 +131,8 @@
        			<table class="table">
        				<thead>
        					<tr>
+       						<th>事件</th></th>
        						<th>时间</th>
-       						<th>事件</th>
        						<th>预计时长</th>
                             <th>重复</th>
        						<th>次数</th>
@@ -147,6 +147,19 @@
                                     </a>
                                 </td>
                                 <td>{{ schedule.start_time }}</td>
+                                <td>{{ schedule.estimated_duration }}</td>
+                                <td>{{ schedule.loop_types }}</td>
+                                <td>{{ schedule.loop_times }}</td>
+                            </tr>
+                        {% endfor %}
+                        {% for schedule in my_old_schedules %}
+                            <tr>
+                                <td>
+                                    <a href = "/admin/gtd/scheduleitem/{{ schedule.id }}/change/">
+                                    {{ schedule.routine }}
+                                    </a>
+                                </td>
+                                <td>{{ schedule.next_time }}</td>
                                 <td>{{ schedule.estimated_duration }}</td>
                                 <td>{{ schedule.loop_types }}</td>
                                 <td>{{ schedule.loop_times }}</td>

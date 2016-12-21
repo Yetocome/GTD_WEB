@@ -71,13 +71,33 @@ class Planner(object):
         return self.my_week[week_day]
 
 def home_page(request):
-    today = timezone.now().date()
-    schedules = ScheduleItem.objects.filter(start_time__gt = today).order_by('start_time')
+    # old_loop_schedules = ScheduleItem.objects.raw(
+    #     'SELECT * \
+    #     FROM gtd_ScheduleItem T \
+    #     WHERE T.loop_times <> 0 \
+    #     '
+    # )
+    today = timezone.now()
+    old_loop_schedules = []
+    future_schedules = ScheduleItem.objects.filter(start_time__gt = today).order_by('start_time')
+    old_loop_schedules_query_set = ScheduleItem.objects.exclude(loop_times = 0).filter(start_time__lt = today)
+    for old_item in old_loop_schedules_query_set:
+        if not old_item.next_time == None:
+            print(old_item.next_time)
+            if old_item.next_time >= today:
+                old_loop_schedules.append(old_item)
+
+    # i = j = 0
+    # old_loop_schedules = old_loop_schedules[:5]
+    # future_schedules = future_schedules[:5]
+    # while i < old_loop_schedules.__len__() and j < future_schedules.__len__():
+
     todos = TodoItem.objects.filter(done_flag = False).order_by('priority')
     planner = Planner()
     today_plan = planner.get_today_plan()
     return render(request, 'home.html', {
-        'my_schedules': schedules[:5],
+        'my_schedules': future_schedules[:5],
+        'my_old_schedules': old_loop_schedules[:5],
         'my_todos': todos[:5],
         'my_week': planner.my_week,
         'my_day': today_plan
