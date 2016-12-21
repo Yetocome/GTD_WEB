@@ -1,6 +1,7 @@
 from django.db import models
 import datetime, calendar
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 LOOP_TYPES = (
     ('N', '不循环'),
@@ -30,15 +31,15 @@ def add_years(sourcetime, years):
 
 # Create your models here.
 
-class User(models.Model):
-    name = models.CharField(max_length=20)
-    # work_time = models.IntegerField(default=25)
-    # short_break_time = models.IntegerField(default=5)
-    # long_break_time = models.IntegerField(default=15)
-    # how_many_a_break = models.IntegerField(default=4)
-
-    def __str__(self):
-        return self.name
+# class User(models.Model):
+#     name = models.CharField(max_length=20)
+#     # work_time = models.IntegerField(default=25)
+#     # short_break_time = models.IntegerField(default=5)
+#     # long_break_time = models.IntegerField(default=15)
+#     # how_many_a_break = models.IntegerField(default=4)
+#
+#     def __str__(self):
+#         return self.name
 
 class TodoItem(models.Model):
     user = models.ForeignKey(User, default=None)
@@ -57,6 +58,7 @@ class TodoItem(models.Model):
     #     if des == "":
     #         des = "no description"
     #     return self.todo + ': ' + des
+
     # Derived attribute, get current pomodoro numbers
     @property
     def current_pomodores(self):
@@ -70,8 +72,9 @@ class Pomodoro(models.Model):
     completed_flag = models.BooleanField(default=True)
     def __str__(self):
         return self.todo.todo+' potato'
-class ScheduleItem(models.Model):
 
+
+class ScheduleItem(models.Model):
     user = models.ForeignKey(User, default=None)
     routine = models.CharField(max_length=100)
     start_time = models.DateTimeField()
@@ -145,11 +148,11 @@ class ScheduleItem(models.Model):
             raise ValueError("You cannot add a estimated duration more than 18 hours")
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        des = self.description
-        if des == "":
-            des = "no description"
-        return self.routine + ': ' + des
+    # def __str__(self):
+    #     des = self.description
+    #     if des == "":
+    #         des = "no description"
+    #     return self.routine + ': ' + des
 
     # Derived attribute, know when will this scheule end
 
