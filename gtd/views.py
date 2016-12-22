@@ -8,7 +8,10 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout
+from django.contrib import messages
 # Create your views here.
+import pytz
+tz = pytz.timezone('Asia/Shanghai')
 
 def register(request):
     if request.user.is_authenticated():
@@ -19,11 +22,12 @@ def register(request):
             user = form.save(commit=False)
             user.email = form.cleaned_data['email']
             user.save()
-            messages.info(request, '注册成功!')
-            return redirect('admin/')
-        return render(request, 'register.html', {
-            'form':form,
-        })
+            # messages.info(request, '注册成功!')
+            return redirect('../login/')
+        else:
+            return render(request, 'register.html', {
+                'form':form,
+            })
     else:
         form = RegistrationForm()
         return render(request, 'register.html', {
@@ -89,7 +93,9 @@ class Planner(object):
         self.ScheduleItemQuery = ScheduleItem.objects.filter(user=user)
 
     def get_block_place(self, sourcetime):
+        # sourcetime = sourcetime.replace(tzinfo=tz)
         sourcetime_hour = sourcetime.hour
+        sourcetime_hour = (sourcetime_hour+8)%24 # 时区转换
         if 0 <= sourcetime.hour < 6:
             sourcetime_hour += 6
         return (sourcetime.weekday(), int(sourcetime_hour/6)-1)
